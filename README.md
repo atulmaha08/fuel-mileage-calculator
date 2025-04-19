@@ -19,7 +19,7 @@ This web-based application allows users to calculate either the **distance** tha
 
 ## Live Demo
 
-Check the live demo here: [Fuel Mileage Calculator](https://atu08.github.io/fuel-mileage-calculator/)
+Check the live demo here: [Fuel Mileage Calculator](https://atulmaha08.github.io/fuel-mileage-calculator/)
 
 ## How to Use
 
