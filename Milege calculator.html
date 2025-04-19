@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Petrol Amount to Distance / Mileage Calculator</title>
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/9154/9154309.png" />
+
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #56ccf2, #2f80ed);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2f80ed;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2f80ed;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #1c60b3;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>⛽ Petrol Amount to Distance / Mileage Calculator</h2>
+
+    <!-- Dropdown to choose between "Check Mileage" or "Check Distance" -->
+    <label for="calculationType">Choose Calculation Type:</label>
+    <select id="calculationType">
+      <option value="checkMileage">Check Mileage</option>
+      <option value="checkDistance">Check Distance</option>
+    </select>
+
+    <!-- Petrol price input -->
+    <label for="petrolPrice">Petrol Price per Liter (₹):</label>
+    <input type="number" id="petrolPrice" placeholder="Enter petrol price per liter" />
+
+    <!-- Amount spent input -->
+    <label for="amountSpent">Amount Spent (₹):</label>
+    <input type="number" id="amountSpent" placeholder="Enter amount spent on petrol" />
+
+    <!-- Fields for "Check Mileage" logic -->
+    <div id="checkMileageFields">
+      <label for="startingMileage">Starting Mileage (km):</label>
+      <input type="number" id="startingMileage" placeholder="Enter starting mileage (km)" />
+
+      <label for="currentMileage">Current Mileage (km):</label>
+      <input type="number" id="currentMileageMileage" placeholder="Enter current mileage (km)" />
+    </div>
+
+    <!-- Fields for "Check Distance" logic -->
+    <div id="checkDistanceFields" style="display: none;">
+      <label for="bikeMileage">Bike Mileage (km/l):</label>
+      <input type="number" id="bikeMileage" placeholder="Enter bike mileage (if known)" />
+
+      <label for="currentMileage">Current Mileage (km):</label>
+      <input type="number" id="currentMileage" placeholder="Enter current odometer reading" />
+    </div>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    // Function to toggle between the two calculation types
+    document.getElementById('calculationType').addEventListener('change', function() {
+      const calculationType = this.value;
+      if (calculationType === 'checkMileage') {
+        document.getElementById('checkMileageFields').style.display = 'block';
+        document.getElementById('checkDistanceFields').style.display = 'none';
+      } else {
+        document.getElementById('checkMileageFields').style.display = 'none';
+        document.getElementById('checkDistanceFields').style.display = 'block';
+      }
+    });
+
+    function calculate() {
+      const petrolPrice = parseFloat(document.getElementById('petrolPrice').value);
+      const amountSpent = parseFloat(document.getElementById('amountSpent').value);
+      const calculationType = document.getElementById('calculationType').value;
+
+      // Check if basic input is valid
+      if (isNaN(petrolPrice) || isNaN(amountSpent) || amountSpent <= 0 || petrolPrice <= 0) {
+        document.getElementById('result').innerHTML = "⚠️ Please enter valid numbers (Price and Amount should be > 0).";
+        return;
+      }
+
+      if (calculationType === 'checkMileage') {
+        // Fields for mileage calculation
+        const startingMileage = parseFloat(document.getElementById('startingMileage').value);
+        const currentMileage = parseFloat(document.getElementById('currentMileageMileage').value);
+
+        if (isNaN(startingMileage) || isNaN(currentMileage) || currentMileage <= startingMileage) {
+          document.getElementById('result').innerHTML = "⚠️ Please enter valid starting and current mileage.";
+          return;
+        }
+
+        // Calculate fuel quantity
+        const fuelQuantity = amountSpent / petrolPrice;
+        // Calculate distance traveled
+        const distanceTraveled = currentMileage - startingMileage;
+
+        // Calculate mileage
+        const mileage = distanceTraveled / fuelQuantity;
+
+        document.getElementById('result').innerHTML = `💡 With ₹${amountSpent}, you got <strong>${fuelQuantity.toFixed(2)} liters</strong> of fuel.<br>
+        💡 You traveled <strong>${distanceTraveled} km</strong> with this fuel.<br>
+        💡 Your bike's mileage is <strong>${mileage.toFixed(2)} km/l</strong>.`;
+      } else if (calculationType === 'checkDistance') {
+        // Fields for distance calculation
+        const bikeMileage = parseFloat(document.getElementById('bikeMileage').value);
+        const currentMileage = parseFloat(document.getElementById('currentMileage').value);
+
+        if (isNaN(bikeMileage) || bikeMileage <= 0) {
+          document.getElementById('result').innerHTML = "⚠️ Please enter valid bike mileage.";
+          return;
+        }
+
+        // Calculate fuel quantity
+        const fuelQuantity = amountSpent / petrolPrice;
+        // Calculate distance
+        const distance = fuelQuantity * bikeMileage;
+
+        document.getElementById('result').innerHTML = `💡 With ₹${amountSpent}, you can get <strong>${fuelQuantity.toFixed(2)} liters</strong> of fuel.<br>
+        💡 Your bike can travel <strong>${distance.toFixed(2)} km</strong> with this fuel at a mileage of ${bikeMileage} km/l.`;
+      }
+    }
+  </script>
+
+</body>
+</html>
